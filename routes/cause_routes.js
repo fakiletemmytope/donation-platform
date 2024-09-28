@@ -43,14 +43,15 @@ CauseRouter.get('/', authUser, async(request, response) =>{
             
             const all_causes = []
             causes.map((cause) =>{
-                const {_id, title, description, required_amount, amount_raised, organizer} = cause
+                const {_id, title, description, required_amount, amount_raised, organizer, status} = cause
                 const cause_detail = {
                     id: _id,
                     title: title,
                     description: description,
                     required_amount: required_amount,
                     amount_raised: amount_raised,
-                    organizer: organizer
+                    organizer: organizer,
+                    status: status
                 }
                 all_causes.push(cause_detail)
             })
@@ -77,23 +78,22 @@ CauseRouter.get('/:id', authUser, async(request, response) =>{
         const cause = await CauseModel.findById(id)
         //console.log(cause)
         if(cause){
-            const { _id, title, description, required_amount, amount_raised, organizer } = cause
+            const { _id, title, description, required_amount, amount_raised, organizer, status } = cause
             const cause_details = {
                 id: _id,
                 title: title,
                 description: description,
                 required_amount: required_amount,
                 amount_raised: amount_raised,
-                organizer: organizer
+                organizer: organizer,
+                status: status
             }
             return response.status(200).json({
                 'causes': cause_details
             })
         }
         else{
-            return response.status(200).json({
-                'causes': "No causes"
-            }) 
+            return response.status(200).send("Cause does not exist")
         }
     }
     catch(error){
@@ -119,13 +119,13 @@ CauseRouter.put('/:id', authUser, async(request, response)=>{
             })
         }
         else{
-            return response.status(401).json({
+            return response.status(403).json({
                 'message': 'unauthorized user'
             })
         }
     }
     catch(error){
-        return response.status(401).json({
+        return response.status(500).json({
             'message': error.message
         })
     }
@@ -140,18 +140,18 @@ CauseRouter.delete('/:id', authUser, async (request, response)=>{
         
         if(cause && cause.organizer_id == request['user']['user_id']){
             await CauseModel.findByIdAndDelete(request.params.id)
-            response.status(210).json({
+            response.status(204).json({
                 'message': "cause deleted"
             })
         }
         else{
-            return response.status(401).json({
+            return response.status(404).json({
                 'message': 'Cause does not exist'
             })
         }
     }
     catch(error){
-        return response.status(401).json({
+        return response.status(500).json({
             'message': error.message
         })
     }

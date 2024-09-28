@@ -22,11 +22,11 @@ DonationRouter.get('/', authUser, async (request, response)=>{
             })
         }
         else{
-            return response.status(201).send("No donations")
+            return response.status(200).send("No donations")
         }
     }
     catch(error){
-        return response.status(401).send(`${error}`)
+        return response.status(500).send(`${error}`)
     }
 })
 
@@ -46,15 +46,15 @@ DonationRouter.get('/:donation_id', authUser, async(request, response)=>{
                 })
             }
             else{
-                return response.status(200).send("Donation not found")
+                return response.status(404).send("Donation not found")
             }
         }
         catch(error){
-            return response.status(401).send(`${error}`)
+            return response.status(500).send(`${error}`)
         }
     }
     else{
-        return response.status(401).send("No id provided")
+        return response.status(403).send("No id provided")
     }
     
 
@@ -89,10 +89,12 @@ DonationRouter.get('/user/:user_id', authUser, async(request, response)=>{
 
 //post donation(make donation){only registered users can make donations}
 DonationRouter.post('/:cause_id', authUser, async(request, response)=>{
-    const {email, amount} = request.body
+    const {amount} = request.body
     const cause_id = request.params.cause_id
     const {user_id, user_email, username} = request['user']
-    if(email ==  user_email){
+
+    try{
+
         await connectDb()
         //check if cause exists
         const cause = await CauseModel.findById(cause_id)
@@ -102,7 +104,7 @@ DonationRouter.post('/:cause_id', authUser, async(request, response)=>{
             var reference = uuid()
 
             //call the paystack payment api that returns the reference and checkout link,
-            let pay_gen = await generatePayment(email, `${amount * 100}`, reference)
+            let pay_gen = await generatePayment(user_email, `${amount * 100}`, reference)
             //console.log(pay_gen)
     
             if (pay_gen == "network error"){
@@ -130,27 +132,24 @@ DonationRouter.post('/:cause_id', authUser, async(request, response)=>{
                             "reference": data.reference,
                             "checkout_url": data.authorization_url
                         })
-                    }
-                    else{
-                        response.status(401).json({
-                            "message": "Network error"
-                        })
-                    }
+                }
+                else{
+                    response.status(401).json({
+                        "message": "Network error"
+                    })
+                }
             }  
 
             
         }
         else{
-            response.status(401).json({
+            response.status(404).json({
                 "message": "Cause does not exist or donation on cause has been stopped"
             })
         }
-        
     }
-    else{
-        response.status(401).json({
-            "message": "Unauthorized User"
-        })
+    catch(error){
+        response.status(500).send(`${error}`)
     }
     
 })
@@ -181,7 +180,7 @@ DonationRouter.get("/donation-reference/:reference", authUser, async(request, re
 
                             //update the donation and the cause
                             const cause = await CauseModel.findById(donation.cause_id)
-                            cause.amount_raised = cause.amount_raised + amount
+                            cause.amount_raised = cause.amount_raised + (amount/100)
                             donation.status = status
                             await cause.save()
                             await donation.save()                           
@@ -217,7 +216,7 @@ DonationRouter.get("/donation-reference/:reference", authUser, async(request, re
         }
     }
     else{
-        return response.status(202).send("No reference")
+        return response.status(403).send("No reference")
     }
 
 })

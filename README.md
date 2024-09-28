@@ -4,7 +4,6 @@
 
 The primary aim of Kodecamp X is to empower individuals to learn at their own pace, making high-quality tech education more accessible and personalized through Kodecamp. By offering schedulable self-paced courses that can span weeks or even months, Kodecamp X ensures that learners can tailor their education to ft their unique schedules and learning styles.
 
-
 ## Technology Stack
 
 - Nodejs for building
@@ -42,5 +41,5 @@ The primary aim of Kodecamp X is to empower individuals to learn at their own pa
   - GET /doantions/donation-reference/:reference: for verification of payment towards a cause.
 
 ### HOSTED LINK
+
 [Donation-platform](https://donation-platform-be.onrender.com)
-# donation-platform
