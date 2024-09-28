@@ -2,7 +2,7 @@
 
 ---
 
-The primary aim of Kodecamp X is to empower individuals to learn at their own pace, making high-quality tech education more accessible and personalized through Kodecamp. By offering schedulable self-paced courses that can span weeks or even months, Kodecamp X ensures that learners can tailor their education to ft their unique schedules and learning styles.
+Donation app is a web platform that allows a registered user to solicit for fund for a cause/project and hence serves as a medium where donors can donate towards a cause. The platform has a payment gateway integrated where all donations are accepted before passing it to the fund solicitor
 
 ## Technology Stack
 
@@ -42,4 +42,4 @@ The primary aim of Kodecamp X is to empower individuals to learn at their own pa
 
 ### HOSTED LINK
 
-[Donation-platform](https://donation-platform-be.onrender.com)
+[Donation-platform](https://donation-platform-be.onrender.com/users)
